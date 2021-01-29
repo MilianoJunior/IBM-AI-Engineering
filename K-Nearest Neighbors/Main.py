@@ -5,19 +5,18 @@ from sklearn import preprocessing
 from data.Data import Data
 from labels.Labels import Labels
 from sklearn.model_selection import train_test_split
-from sklearn.tree import DecisionTreeClassifier
+from sklearn.neighbors import KNeighborsClassifier
 from sklearn import metrics
 """
-Decision Trees
+K-Nearest Neighbors
 
-Neste algoritmo será implementado a árvore de decisão.Você usará este algoritmo de classificação para construir um modelo
-a partir de dados históricos da bolsa de valores brasileira, no periodo intraday para o indice futuro. Em seguida, você usa 
-a árvore de decisão treinada para prever a classe target, essa classe é estruturada para comprar e vender e não se posicionar 
-em todos fechamentos de candle.
+K-Nearest Neighbours é um algoritmo para aprendizagem supervisionada. Onde os dados são 'treinados' com pontos de dados 
+correspondentes à sua classificação. Uma vez que um ponto deve ser previsto, ele leva em consideração os 'K' pontos mais 
+próximos dele para determinar sua classificação.
 """
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #Constantes
-nun_days = 15000                                  #numero de candles
+nun_days = 910                                   #numero de candles
 batch_size = 1                                   #divisao em blocos
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #instanciar objetos
@@ -52,6 +51,7 @@ X = data_labels[colunas].values.astype(float)
 y= data_labels['target']
 #normalização dos dados
 X = preprocessing.StandardScaler().fit(X).transform(X.astype(float))
+print(X[0:5])
 """
 Divisão dos em treinamento e teste
 
@@ -68,42 +68,33 @@ que são mutuamente exclusivos. Depois disso, você treina com o conjunto de tre
 e testa com o conjunto de teste.
 
 """
-X_trainset, X_testset, y_trainset, y_testset = train_test_split( X, y, test_size=0.2, random_state=4)
-print ('Train set:', X_trainset.shape,  y_trainset.shape)
-print ('Test set:', X_testset.shape,  y_testset.shape)
+X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
+print ('Train set:', X_train.shape,  y_train.shape)
+print ('Test set:', X_test.shape,  y_test.shape)
 
 """
-Modelo e Avaliação
+Classificador
 
-Primeiro, criaremos uma instância do DecisionTreeClassifier chamada traderTree. Dentro do classificador, especifique criterion = "entropia" para que possamos ver o ganho de informação de cada nó.
+Classificador que implementa a votação de k-vizinhos mais próximos.
 """
-traderTree = DecisionTreeClassifier(criterion="entropy", max_depth = 4)
-traderTree.fit(X_trainset,y_trainset)
-predTree = traderTree.predict(X_testset)
-print (predTree [0:5])
-print (y_testset [0:5])
-print("DecisionTrees's Accuracy: ", metrics.accuracy_score(y_testset, predTree))
+k = 4              # fator que define a abrangência dos vizinhos e sua correlação
+#Train Model and Predict  
+test = []
+train =[]
+for K in range(1,50):
+    neigh = KNeighborsClassifier(n_neighbors = K).fit(X_train,y_train)
+    score_train = metrics.accuracy_score(y_train, neigh.predict(X_train))
+    score_test = metrics.accuracy_score(y_test, neigh.predict(X_test))
+    train.append(score_train)
+    test.append(score_test)
+    #Avaliação e acurracia
+    print('-------------------------------')
+    print("Train set Accuracy: ",score_train )
+    print("Test set Accuracy: ",score_test )
 
-"""
-Visualização
-Vamos visualizar a árvore
-"""
-from  io import StringIO
-import pydotplus
-import matplotlib.image as mpimg
-from sklearn import tree
-%matplotlib inline 
+print( "The best accuracy was with", max(train), "with k=", np.argmax(train)) 
+print( "The best accuracy was with", max(test), "with k=", np.argmax(test)) 
 
-dot_data = StringIO()
-filename = "trader1.png";
-featureNames = data_labels.columns[0:19]
-targetNames = ['compra','SO','venda'] #data_labels["target"].unique().tolist()
-out=tree.export_graphviz(traderTree,feature_names=featureNames, out_file=dot_data, class_names= targetNames, filled=True,  special_characters=True,rotate=False)  
-graph = pydotplus.graph_from_dot_data(dot_data.getvalue())  
-graph.write_png(filename)
-img = mpimg.imread(filename)
-plt.figure(figsize=(100, 200))
-plt.imshow(img,interpolation='nearest')
 """
 Conclusão
 
