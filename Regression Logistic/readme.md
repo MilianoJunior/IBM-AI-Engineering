@@ -41,13 +41,18 @@ A versão de Regressão Logística em Scikit-learn, suporta regularização. A r
 ```
 LR = LogisticRegression(C=0.01, solver='liblinear').fit(X_train,y_train)
 ```
-### Índice jaccard
-Vamos tentar o índice jaccard para avaliação da precisão. podemos definir jaccard como o tamanho da interseção dividido pelo tamanho da união de dois conjuntos de etiquetas. Se todo o conjunto de rótulos previstos para uma amostra corresponder estritamente ao conjunto verdadeiro de rótulos, a precisão do subconjunto será 1,0; caso contrário, é 0,0
+### Avaliação
 ```
 yhat = LR.predict(X_test)
 yhat_prob = LR.predict_proba(X_test)
 jaccard_score(y_test, yhat,pos_label=0)
 ```
+| Type | precision | recall | f1-score | support |
+| ------ | ------ |------ | ------ | ------ |
+| 0.0 | 0.63 | 0.79 | 0.70 | 53 |
+| 1.0 | 0.23 | 0.38 | 0.29 | 16 |
+| 2.0 | 0.00 | 0.00 | 0.00 | 25 |
+
 ### Matriz de Confusão
 Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão.
 
@@ -100,6 +105,8 @@ print (classification_report(y_test, yhat))
 from sklearn.metrics import log_loss
 log_loss(y_test, yhat_prob)
 ```
+![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+
 ## Conclusão
 
 Em construção
