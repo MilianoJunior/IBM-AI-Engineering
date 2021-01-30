@@ -63,24 +63,25 @@ for i in params:
     print('----------')
     print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
     print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+
+Train set Accuracy:  0.5561497326203209
+Test set Accuracy:  0.5106382978723404
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
+----------
+Train set Accuracy:  0.5561497326203209
+Test set Accuracy:  0.5106382978723404
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
 ```
-Train set Accuracy:  0.5561497326203209
-Test set Accuracy:  0.5106382978723404
-----------
-Train set Accuracy:  0.5508021390374331
-Test set Accuracy:  0.5319148936170213
-----------
-Train set Accuracy:  0.5508021390374331
-Test set Accuracy:  0.5319148936170213
-----------
-Train set Accuracy:  0.5561497326203209
-Test set Accuracy:  0.5106382978723404
-----------
-Train set Accuracy:  0.5508021390374331
-Test set Accuracy:  0.5319148936170213
-----------
-Train set Accuracy:  0.5508021390374331
-Test set Accuracy:  0.5319148936170213
 ### Matriz de Confusão
 Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão, para o parametro liblinear.
 
