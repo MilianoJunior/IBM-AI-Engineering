@@ -50,7 +50,7 @@ print("Train set Accuracy: ", metrics.accuracy_score(data_labels['target'],data_
 Train set Accuracy:  0.19658119658119658
 ```
 ### Visualização
-```
+
 ![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/K-Means%20Clustering/Figure%202021-01-30%20151746.png?raw=true)
 
 ![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/K-Means%20Clustering/Figure%202021-01-30%20152000.png?raw=true)
