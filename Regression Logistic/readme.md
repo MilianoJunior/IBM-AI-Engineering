@@ -22,7 +22,7 @@ labels = Labels()
 data_labels = labels.index_labels(base,entrada)
 ```
 ## Normalização dos dados
-A padronização de dados dá aos dados média zero e variação unitária, é uma boa prática,especialmente para algoritmos como KNN, que é baseado na distância dos casos:
+A padronização de dados dá aos dados média zero e variação unitária, é uma boa prática.
 ```
 X = data_labels[colunas].values.astype(float)
 y= data_labels['target']

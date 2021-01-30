@@ -9,7 +9,7 @@ from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn.metrics import jaccard_score
+from sklearn import metrics
 """
 Logistic regression
 
@@ -20,7 +20,7 @@ Para resolver os problemas de regressão logística, o algoritmo faz cálculos n
 """
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #Constantes
-nun_days = 15000                                  #numero de candles
+nun_days = 910                                  #numero de candles
 batch_size = 1                                   #divisao em blocos
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #instanciar objetos
@@ -84,13 +84,18 @@ A versão de Regressão Logística em Scikit-learn, suporta regularização. A r
 
 LR = LogisticRegression(C=0.01, solver='liblinear').fit(X_train,y_train)
 
+
+
+
 """
 ### índice jaccard
 Vamos tentar o índice jaccard para avaliação da precisão. podemos definir jaccard como o tamanho da interseção dividido pelo tamanho da união de dois conjuntos de etiquetas. Se todo o conjunto de rótulos previstos para uma amostra corresponder estritamente ao conjunto verdadeiro de rótulos, a precisão do subconjunto será 1,0; caso contrário, é 0,0
 """
 yhat = LR.predict(X_test)
-yhat_prob = LR.predict_proba(X_test)
-jaccard_score(y_test, yhat,pos_label=0)
+print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
+print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+# yhat_prob = LR.predict_proba(X_test)
+# jaccard_score(y_test, yhat,pos_label=0)
 
 
 """
@@ -132,18 +137,18 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-print(confusion_matrix(y_test, yhat, labels=[1,0]))
+print(confusion_matrix(y_test, yhat, labels=[0,1,2]))
 # Compute confusion matrix
-cnf_matrix = confusion_matrix(y_test, yhat, labels=[1,0])
+cnf_matrix = confusion_matrix(y_test, yhat, labels=[0,1,2])
 np.set_printoptions(precision=2)
 
 
 # Plot non-normalized confusion matrix
 plt.figure()
-plot_confusion_matrix(cnf_matrix, classes=['churn=1','churn=0'],normalize= False,  title='Confusion matrix')
+plot_confusion_matrix(cnf_matrix, classes=['SO=0','compra=1','venda=2'],normalize= False,  title='Confusion matrix')
 print (classification_report(y_test, yhat))
-from sklearn.metrics import log_loss
-log_loss(y_test, yhat_prob)
+# from sklearn.metrics import log_loss
+# log_loss(y_test, yhat_prob)
 """
 Conclusão
 

@@ -46,7 +46,7 @@ print (predTree [0:5])
 print (y_testset [0:5])
 print("DecisionTrees's Accuracy: ", metrics.accuracy_score(y_testset, predTree))
 ```
-
+![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/Decision%20Tree/trader.png?raw=true)
 ## Conclusão
 
 Em construção
