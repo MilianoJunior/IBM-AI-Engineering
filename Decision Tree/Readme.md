@@ -49,6 +49,5 @@ print("DecisionTrees's Accuracy: ", metrics.accuracy_score(y_testset, predTree))
 ![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/Decision%20Tree/trader.png?raw=true)
 ## Conclusão
 
-Observando a arvore de decisão plotada com ajuda da biblioteca pydotplus, pode-se formular diversas regras para implementar um algoritmo trader. É impressionante está técnica com ajuda do calculo computacional,
-No final do ramos, é verificar possiveis negociações que podem ser lucrativas.
+Observando a arvore de decisão plotada com ajuda da biblioteca pydotplus, pode-se formular diversas regras para implementar um algoritmo trader, buscando as folhas puras no final dos ramos.
 

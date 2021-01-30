@@ -81,23 +81,26 @@ Modelo e Avaliação
 Vamos construir nosso modelo usando LogisticRegression do pacote Scikit-learn. Esta função implementa regressão logística e pode usar diferentes otimizadores numéricos para encontrar parâmetros, incluindo ‘newton-cg’, ‘lbfgs’, ‘liblinear’, ‘sag’, ‘saga’ solvers. Você pode encontrar muitas informações sobre os prós e os contras desses otimizadores se pesquisar na Internet.
 A versão de Regressão Logística em Scikit-learn, suporta regularização. A regularização é uma técnica usada para resolver o problema de overfitting em modelos de aprendizado de máquina. O parâmetro C indica o inverso da força de regularização que deve ser uma flutuação positiva. Valores menores especificam regularização mais forte. Agora vamos ajustar nosso modelo com o conjunto de trem:
 """
-
 LR = LogisticRegression(C=0.01, solver='liblinear').fit(X_train,y_train)
 
-
-
-
 """
-### índice jaccard
-Vamos tentar o índice jaccard para avaliação da precisão. podemos definir jaccard como o tamanho da interseção dividido pelo tamanho da união de dois conjuntos de etiquetas. Se todo o conjunto de rótulos previstos para uma amostra corresponder estritamente ao conjunto verdadeiro de rótulos, a precisão do subconjunto será 1,0; caso contrário, é 0,0
+Avaliação
 """
 yhat = LR.predict(X_test)
 print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
 print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
-# yhat_prob = LR.predict_proba(X_test)
-# jaccard_score(y_test, yhat,pos_label=0)
 
-
+"""
+Testando para diversos parametros
+"""
+params = ['newton-cg', 'lbfgs', 'sag', 'saga']
+for i in params:
+    LR = LogisticRegression(C=0.01, solver=i).fit(X_train,y_train)
+    yhat = LR.predict(X_test)
+    print('----------')
+    print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
+    print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+    
 """
 Matriz de Confusão
 Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão.

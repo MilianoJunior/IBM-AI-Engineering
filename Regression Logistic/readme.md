@@ -53,63 +53,42 @@ jaccard_score(y_test, yhat,pos_label=0)
 | 1.0 | 0.23 | 0.38 | 0.29 | 16 |
 | 2.0 | 0.00 | 0.00 | 0.00 | 25 |
 
+
+### Testando para diversos parametros
+```
+params = ['newton-cg', 'lbfgs', 'sag', 'saga']
+for i in params:
+    LR = LogisticRegression(C=0.01, solver=i).fit(X_train,y_train)
+    yhat = LR.predict(X_test)
+    print('----------')
+    print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
+    print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+```
+Train set Accuracy:  0.5561497326203209
+Test set Accuracy:  0.5106382978723404
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
+----------
+Train set Accuracy:  0.5561497326203209
+Test set Accuracy:  0.5106382978723404
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
+----------
+Train set Accuracy:  0.5508021390374331
+Test set Accuracy:  0.5319148936170213
 ### Matriz de Confusão
-Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão.
+Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão, para o parametro liblinear.
 
-```
-from sklearn.metrics import classification_report, confusion_matrix
-import itertools
-def plot_confusion_matrix(cm, classes,
-                          normalize=False,
-                          title='Confusion matrix',
-                          cmap=plt.cm.Blues):
-    """
-    This function prints and plots the confusion matrix.
-    Normalization can be applied by setting `normalize=True`.
-    """
-    if normalize:
-        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
-        print("Normalized confusion matrix")
-    else:
-        print('Confusion matrix, without normalization')
-
-    print(cm)
-
-    plt.imshow(cm, interpolation='nearest', cmap=cmap)
-    plt.title(title)
-    plt.colorbar()
-    tick_marks = np.arange(len(classes))
-    plt.xticks(tick_marks, classes, rotation=45)
-    plt.yticks(tick_marks, classes)
-
-    fmt = '.2f' if normalize else 'd'
-    thresh = cm.max() / 2.
-    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
-        plt.text(j, i, format(cm[i, j], fmt),
-                 horizontalalignment="center",
-                 color="white" if cm[i, j] > thresh else "black")
-
-    plt.tight_layout()
-    plt.ylabel('True label')
-    plt.xlabel('Predicted label')
-print(confusion_matrix(y_test, yhat, labels=[1,0]))
-# Compute confusion matrix
-cnf_matrix = confusion_matrix(y_test, yhat, labels=[1,0])
-np.set_printoptions(precision=2)
-
-
-# Plot non-normalized confusion matrix
-plt.figure()
-plot_confusion_matrix(cnf_matrix, classes=['churn=1','churn=0'],normalize= False,  title='Confusion matrix')
-print (classification_report(y_test, yhat))
-from sklearn.metrics import log_loss
-log_loss(y_test, yhat_prob)
-```
-![alt text](https://github.com/[username]/[reponame]/blob/[branch]/image.jpg?raw=true)
+![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/Regression%20Logistic/Figure%202021-01-30%20095647.png?raw=true)
 
 ## Conclusão
 
-Em construção
+A matriz de confusão mostra a performace desta técnica, com uma acurácia de 51%, o modelo não apresenta uma solução para se obter negociações lucrativas.
 
 
 
