@@ -1,4 +1,3 @@
-import random 
 import numpy as np
 import matplotlib.pyplot as plt
 from data.Data import Data
@@ -7,17 +6,16 @@ from sklearn.metrics import classification_report, confusion_matrix
 import itertools
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn.cluster import KMeans 
-from sklearn.datasets.samples_generator import make_blobs 
 """
-K-Means Clustering
-Existem muitos modelos de cluster por aí. Neste notebook apresentaremos o modelo que é considerado um dos modelos mais simples entre eles. Apesar de sua simplicidade, o K-means é amplamente utilizado para armazenamento em cluster em muitos aplicativos de ciência de dados, especialmente útil se você precisar descobrir rapidamente insights de dados não rotulados. Neste bloco de notas, você aprenderá como usar k-Means para segmentação de operações na bolsa de valores.
+Support Vector Machines
+
+O SVM funciona mapeando dados para um espaço de recurso de alta dimensão para que os pontos de dados possam ser categorizados, mesmo quando os dados não são linearmente separáveis. Um separador entre as categorias é encontrado e os dados são transformados de forma que o separador possa ser desenhado como um hiperplano. Em seguida, as características dos novos dados podem ser usadas para prever o grupo ao qual um novo registro deve pertencer.
+
 """
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #Constantes
 nun_days = 910                                  #numero de candles
 batch_size = 1                                   #divisao em blocos
-np.random.seed(0)
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
 #instanciar objetos
 """
@@ -73,45 +71,85 @@ print ('Test set:', X_test.shape,  y_test.shape)
 
 """
 Modelo e Avaliação
+O algoritmo SVM oferece uma escolha de funções de kernel para realizar seu processamento. Basicamente, o mapeamento de dados em um espaço dimensional superior é chamado de kernelling. A função matemática usada para a transformação é conhecida como função kernel e pode ser de diferentes tipos, como:
+
+1. Linear
+2. Polinômio
+3. Função de base radial (RBF)
+4.Sigmóide
 
 """
-clusterNum = 3
-k_means = KMeans(init = "k-means++", n_clusters = clusterNum, n_init = 12)
-k_means.fit(X)
-labels = k_means.labels_
-print(labels)
+from sklearn import svm
+clf = svm.SVC(kernel='rbf')
+clf.fit(X_train, y_train) 
 
 """
 Avaliação
-Podemos verificar facilmente os valores do centroide calculando a média dos recursos em cada cluster.
 """
-data_labels["Clus_km"] = labels
-data_labels.head(5)
-from sklearn import metrics
-print("Train set Accuracy: ", metrics.accuracy_score(data_labels['target'],data_labels['Clus_km']))
+yhat = clf.predict(X_test)
+from sklearn.metrics import f1_score
+print('Score: ',f1_score(y_test, yhat, average='weighted'),' Kernel: rbf')
 
-" Visualização"
+# """
+# Testando para diversos parametros
+# """
+params = ['linear', 'poly', 'sigmoid']
+for i in params:
+    clf1 = svm.SVC(kernel=i)
+    clf1.fit(X_train, y_train) 
+    print('----------')
+    print('Score: ',f1_score(y_test, yhat, average='weighted'),' Kernel: {}'.format(i)) 
+    
+# """
+# Matriz de Confusão
+# Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão.
+# """
 
-data_labels.groupby('Clus_km').mean()
 
-area = np.pi * ( X[:, 1])**2  
-plt.scatter(X[:, 5], X[:, 6], s=area, c=labels.astype(np.float), alpha=0.5)
-plt.xlabel('Hora', fontsize=18)
-plt.ylabel('Dif', fontsize=16)
-plt.show()
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          cmap=plt.cm.Blues):
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    print(cm)
+
+    plt.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    plt.colorbar()
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.2f' if normalize else 'd'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.tight_layout()
+    plt.ylabel('True label')
+    plt.xlabel('Predicted label')
+    
+# Compute confusion matrix
+cnf_matrix = confusion_matrix(y_test, yhat, labels=[0,1,2])
+np.set_printoptions(precision=2)
+
+print (classification_report(y_test, yhat))
+
+# Plot non-normalized confusion matrix
+plt.figure()
+plot_confusion_matrix(cnf_matrix, classes=['SO(0)','Compra(1)','Venda(2)'],normalize= False,  title='Confusion matrix')
 
 
-from mpl_toolkits.mplot3d import Axes3D 
-fig = plt.figure(1, figsize=(8, 6))
-plt.clf()
-ax = Axes3D(fig, rect=[0, 0, .95, 1], elev=48, azim=134)
 
-plt.cla()
-# plt.ylabel('Age', fontsize=18)
-# plt.xlabel('Income', fontsize=16)
-# plt.zlabel('Education', fontsize=16)
-ax.set_xlabel('Dif')
-ax.set_ylabel('M22M44')
-ax.set_zlabel('M22M66')
 
-ax.scatter(X[:, 1], X[:, 5], X[:, 6], c= labels.astype(np.float))
