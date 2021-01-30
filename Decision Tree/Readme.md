@@ -1,6 +1,9 @@
-# K-Nearest Neighbors
+# Decision Trees
 
-K-Nearest Neighbours é um algoritmo para aprendizagem supervisionada. Onde os dados são 'treinados' com pontos de dados correspondentes à sua classificação. Uma vez que um ponto deve ser previsto, ele leva em consideração os 'K' pontos mais próximos dele para determinar sua classificação.
+Neste algoritmo será implementado a árvore de decisão.Você usará este algoritmo de classificação para construir um modelo
+a partir de dados históricos da bolsa de valores brasileira, no periodo intraday para o indice futuro. Em seguida, você usa 
+a árvore de decisão treinada para prever a classe target, essa classe é estruturada para comprar e vender e não se posicionar 
+em todos fechamentos de candle.
 
 ## Sobre os dados
 Estes dados são informações retiradas da BMF Bovespa, o periodo é Intraday,além das informações que formam um candlestick, são associados as colunas, informações de indicadores técnicos.
@@ -32,25 +35,21 @@ Fora da precisão da amostra é a porcentagem de previsões corretas que o model
 ```
 X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
 ```
-## Classificador
-Classificador que implementa a votação de k-vizinhos mais próximos.
+## Modelo e Avaliação
+
+Primeiro, criaremos uma instância do DecisionTreeClassifier chamada traderTree. Dentro do classificador, especifique criterion = "entropia" para que possamos ver o ganho de informação de cada nó.
 ```
-k = 4              # fator que define a abrangência dos vizinhos e sua correlação
-test = []
-train =[]
-for K in range(1,50):
-    neigh = KNeighborsClassifier(n_neighbors = K).fit(X_train,y_train)
-    score_train = metrics.accuracy_score(y_train, neigh.predict(X_train))
-    score_test = metrics.accuracy_score(y_test, neigh.predict(X_test))
-    train.append(score_train)
-    test.append(score_test)
+traderTree = DecisionTreeClassifier(criterion="entropy", max_depth = 4)
+traderTree.fit(X_trainset,y_trainset)
+predTree = traderTree.predict(X_testset)
+print (predTree [0:5])
+print (y_testset [0:5])
+print("DecisionTrees's Accuracy: ", metrics.accuracy_score(y_testset, predTree))
 ```
-The best accuracy was with 1.0 with k= 0
-The best accuracy was with 0.5851063829787234 with k= 8
+
 ## Conclusão
 
-É possível verificar que o modelo converge para uma solução. É interressante notar que quando k=1, em treinamento é atingido 100% das soluções, mas quando colocado a prova no conjunto de dados teste não se tem o mesmo número de acertos, isso significa que o modelo está com overfiting. 
-Quando K vai aumentando, a acurracia dos dados de treinamento vai dimunindo,no entando,a acurracia dos dados de teste tem um leve aumento. Talvez, filtrar as entradas na busca de outliers ou dimunuir o número de entradas verificando a correlação possam trazer melhores resultados.
+Em construção
 
 
 
