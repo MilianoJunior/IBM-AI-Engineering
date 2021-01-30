@@ -1,5 +1,6 @@
-# K-Means Clustering
-Existem muitos modelos de cluster por aí. Neste notebook apresentaremos o modelo que é considerado um dos modelos mais simples entre eles. Apesar de sua simplicidade, o K-means é amplamente utilizado para armazenamento em cluster em muitos aplicativos de ciência de dados, especialmente útil se você precisar descobrir rapidamente insights de dados não rotulados. Neste bloco de notas, você aprenderá como usar k-Means para segmentação de operações na bolsa de valores.
+# Support Vector Machines
+
+O SVM funciona mapeando dados para um espaço de recurso de alta dimensão para que os pontos de dados possam ser categorizados, mesmo quando os dados não são linearmente separáveis. Um separador entre as categorias é encontrado e os dados são transformados de forma que o separador possa ser desenhado como um hiperplano. Em seguida, as características dos novos dados podem ser usadas para prever o grupo ao qual um novo registro deve pertencer.
 
 ## Sobre os dados
 Estes dados são informações retiradas da BMF Bovespa, o periodo é Intraday,além das informações que formam um candlestick, são associados as colunas, informações de indicadores técnicos.
@@ -32,33 +33,52 @@ Fora da precisão da amostra é a porcentagem de previsões corretas que o model
 X_train, X_test, y_train, y_test = train_test_split( X, y, test_size=0.2, random_state=4)
 ```
 ## Modelo e Avaliação
+O algoritmo SVM oferece uma escolha de funções de kernel para realizar seu processamento. Basicamente, o mapeamento de dados em um espaço dimensional superior é chamado de kernelling. A função matemática usada para a transformação é conhecida como função kernel e pode ser de diferentes tipos, como:
 
+* Linear
+* Polinômio
+* Função de base radial (RBF)
+* Sigmóide
 ```
-clusterNum = 3
-k_means = KMeans(init = "k-means++", n_clusters = clusterNum, n_init = 12)
-k_means.fit(X)
-labels = k_means.labels_
-print(labels)
+from sklearn import svm
+clf = svm.SVC(kernel='rbf')
+clf.fit(X_train, y_train) 
 ```
 ### Avaliação
-Podemos verificar facilmente os valores calculando a acurácia comparando aos rótulos com segmentação.
 ```
-data_labels["Clus_km"] = labels
-data_labels.head(5)
-from sklearn import metrics
-print("Train set Accuracy: ", metrics.accuracy_score(data_labels['target'],data_labels['Clus_km']))
-Train set Accuracy:  0.19658119658119658
+yhat = clf.predict(X_test)
+from sklearn.metrics import f1_score
+print('Score: ',f1_score(y_test, yhat, average='weighted'))
+Score:  0.488688367238291 
 ```
-### Visualização
-```
+| Type | precision | recall | f1-score | support |
+| ------ | ------ |------ | ------ | ------ |
+| 0.0 | 0.65 | 0.85 | 0.74 | 53 |
+| 1.0 | 0.27 | 0.38 | 0.32 | 16 |
+| 2.0 | 0.33 | 0.04 | 0.07 | 25 |
 
+
+### Testando para diversos parametros
+```
+for i in params:
+    clf1 = svm.SVC(kernel=i)
+    clf1.fit(X_train, y_train) 
+    print('----------')
+    print('Score: ',f1_score(y_test, yhat, average='weighted'),' Kernel: {}'.format(i)) 
+
+
+Score:  0.488688367238291  Kernellinear
+----------
+Score:  0.488688367238291  Kernelpoly
+----------
+Score:  0.488688367238291  Kernelsigmoid
+```
+### Matriz de Confusão
+Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão, para o parametro rbf.
 
 ![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/SVM/Figure%202021-01-30%20112932.png?raw=true)
 
 ## Conclusão
 
 A matriz de confusão mostra a performace desta técnica, com uma acurácia de 51%, o modelo não apresenta uma solução para se obter negociações lucrativas.
-
-
-
 
