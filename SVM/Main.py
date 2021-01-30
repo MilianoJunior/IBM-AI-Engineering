@@ -2,17 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from data.Data import Data
 from labels.Labels import Labels
-from sklearn.linear_model import LogisticRegression
-from sklearn.metrics import confusion_matrix
+from sklearn.metrics import classification_report, confusion_matrix
+import itertools
 from sklearn import preprocessing
 from sklearn.model_selection import train_test_split
-from sklearn import metrics
 """
-Logistic regression
+Support Vector Machines
 
-Regressão logística é uma técnica estatística e aprendizado de máquina para classificar registros. Para entender melhor, podemos apresentar o exemplo de negociações na bolsa de valores, os operadores realizam compra e venda de ativos com base no conhecimento da analise técnica, sendo assim, eles observam diversos indicadores e a variação do preço das ações, e decidem quando comprar, vender ou não operar, as melhores negociações geram lucros. Pode-se dizer que as variáveis independentes são indicadores e variação do preço, variáveis dependentes são comprar, vender ou não operar.
-Na regressão logística, as variáveis independentes devem ser contínuas. No entanto, nota-se que a variável dependente que é objeto de previsão do modelo de regressão logística, deve ser categórica ou binaria. Sendo assim, a diferença da regressão logística para a regressão linear, está presente na variável dependente, no qual a regressão linear deva ser continua.
-Para resolver os problemas de regressão logística, o algoritmo faz cálculos não lineares, a função sigmoide é um cálculo realizado que indiferente dos valores de entrada, sempre retorna valores probabilísticos entre 0 e 1.
+O SVM funciona mapeando dados para um espaço de recurso de alta dimensão para que os pontos de dados possam ser categorizados, mesmo quando os dados não são linearmente separáveis. Um separador entre as categorias é encontrado e os dados são transformados de forma que o separador possa ser desenhado como um hiperplano. Em seguida, as características dos novos dados podem ser usadas para prever o grupo ao qual um novo registro deve pertencer.
 
 """
 #¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨¨
@@ -74,36 +71,41 @@ print ('Test set:', X_test.shape,  y_test.shape)
 
 """
 Modelo e Avaliação
+O algoritmo SVM oferece uma escolha de funções de kernel para realizar seu processamento. Basicamente, o mapeamento de dados em um espaço dimensional superior é chamado de kernelling. A função matemática usada para a transformação é conhecida como função kernel e pode ser de diferentes tipos, como:
 
-Vamos construir nosso modelo usando LogisticRegression do pacote Scikit-learn. Esta função implementa regressão logística e pode usar diferentes otimizadores numéricos para encontrar parâmetros, incluindo ‘newton-cg’, ‘lbfgs’, ‘liblinear’, ‘sag’, ‘saga’ solvers. Você pode encontrar muitas informações sobre os prós e os contras desses otimizadores se pesquisar na Internet.
-A versão de Regressão Logística em Scikit-learn, suporta regularização. A regularização é uma técnica usada para resolver o problema de overfitting em modelos de aprendizado de máquina. O parâmetro C indica o inverso da força de regularização que deve ser uma flutuação positiva. Valores menores especificam regularização mais forte. Agora vamos ajustar nosso modelo com o conjunto de trem:
+1. Linear
+2. Polinômio
+3. Função de base radial (RBF)
+4.Sigmóide
+
 """
-LR = LogisticRegression(C=0.01, solver='liblinear').fit(X_train,y_train)
+from sklearn import svm
+clf = svm.SVC(kernel='rbf')
+clf.fit(X_train, y_train) 
 
 """
 Avaliação
 """
-yhat = LR.predict(X_test)
-print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
-print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+yhat = clf.predict(X_test)
+from sklearn.metrics import f1_score
+print('Score: ',f1_score(y_test, yhat, average='weighted'),' Kernel: rbf')
 
-"""
-Testando para diversos parametros
-"""
-params = ['newton-cg', 'lbfgs', 'sag', 'saga']
+# """
+# Testando para diversos parametros
+# """
+params = ['linear', 'poly', 'sigmoid']
 for i in params:
-    LR = LogisticRegression(C=0.01, solver=i).fit(X_train,y_train)
-    yhat = LR.predict(X_test)
+    clf1 = svm.SVC(kernel=i)
+    clf1.fit(X_train, y_train) 
     print('----------')
-    print("Train set Accuracy: ", metrics.accuracy_score(y_train, LR.predict(X_train)))
-    print("Test set Accuracy: ", metrics.accuracy_score(y_test, yhat))
+    print('Score: ',f1_score(y_test, yhat, average='weighted'),' Kernel: {}'.format(i)) 
     
-"""
-Matriz de Confusão
-Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão.
-"""
-from sklearn.metrics import classification_report, confusion_matrix
-import itertools
+# """
+# Matriz de Confusão
+# Outra maneira de examinar a precisão do classificador é examinar a matriz de confusão.
+# """
+
+
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
                           title='Confusion matrix',
@@ -137,35 +139,16 @@ def plot_confusion_matrix(cm, classes,
     plt.tight_layout()
     plt.ylabel('True label')
     plt.xlabel('Predicted label')
-print(confusion_matrix(y_test, yhat, labels=[0,1,2]))
+    
 # Compute confusion matrix
 cnf_matrix = confusion_matrix(y_test, yhat, labels=[0,1,2])
 np.set_printoptions(precision=2)
 
+print (classification_report(y_test, yhat))
 
 # Plot non-normalized confusion matrix
 plt.figure()
-plot_confusion_matrix(cnf_matrix, classes=['SO=0','compra=1','venda=2'],normalize= False,  title='Confusion matrix')
-print (classification_report(y_test, yhat))
-# from sklearn.metrics import log_loss
-# log_loss(y_test, yhat_prob)
-"""
-Conclusão
-
-É possível verificar que o modelo converge para uma solução. É interressante notar que quando k=1,
-em treinamento é atingido 100% das soluções, mas quando colocado a prova no conjunto de dados teste
-não se tem o mesmo número de acertos, isso significa que o modelo está com overfiting. 
-Quando K vai aumentando, a acurracia dos dados de treinamento vai dimunindo,no entando,a acurracia dos
-dados de teste tem um leve aumento.
-Talvez, filtrar as entradas na busca de outliers ou dimunuir o número de entradas verificando a correlação
-possam trazer melhores resultados.
-
-
-"""
-
-
-
-
+plot_confusion_matrix(cnf_matrix, classes=['SO(0)','Compra(1)','Venda(2)'],normalize= False,  title='Confusion matrix')
 
 
 
