@@ -38,12 +38,11 @@ clf = RandomForestClassifier()
 clf.fit(X_train, y_train)
 predTree = clf.predict(X_test)
 pred_proba = clf.predict_proba(X_test)
-print("DecisionTrees's Accuracy: ", metrics.accuracy_score(y_test, predTree))
+print("Accuracy: ", metrics.accuracy_score(y_test, predTree))
 ```
-DecisionTrees's Accuracy:  0.5425531914893617
-Visualização
-Vamos visualizar a árvore
-![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/Decision%20Tree/trader.png?raw=true)
+Accuracy:  0.5425531914893617
+# Visualização
+![alt text](https://github.com/MilianoJunior/IBM-AI-Engineering/blob/master/Random%20Florest%20Classifier/imagens/Figure%202021-02-01%20104645.png?raw=true)
 ## Salvando o modelo
 ```
 filename = 'finalized_model.sav'
@@ -51,7 +50,7 @@ pickle.dump(clf, open(filename, 'wb'))
 ```
 ## Conclusão
 
-É possível verificar que o modelo converge para uma solução, com acurácia de 58%.Na paste tests criado um rede socket para
+É possível verificar que o modelo converge para uma solução, com acurácia de 54%.Na paste tests criado um rede socket para
 comunicar com o metatrader 5, foram feitos backtests, o modelo fez algumas operações lucarativas, mas perdeu em outras, 
 não obetendo resultado satisfatório para executar em conta real.
 
